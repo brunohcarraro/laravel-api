@@ -28,7 +28,7 @@ class ClientController extends Controller
     {
         $request->validate([
             'nome' => 'required',
-            'cpf' => 'required',
+            'cpf' => 'required|cpf',
             'sexo' => 'required',
             'cep' => 'required',
             'logradouro' => 'required',
@@ -36,8 +36,9 @@ class ClientController extends Controller
             'cidade' => 'required',
             'estado' => 'required'
         ], [
-            'nome.required' => 'O campo nome deve ser preenchido',
+            'nome.required' => 'O campo Nome deve ser preenchido',
             'cpf.required' => 'O campo CPF deve ser preenchido',
+            'cpf.cpf' => 'CPF inválido',
             'sexo.required' => 'O campo Sexo deve ser preenchido',
             'cep.required' => 'O campo CEP deve ser preenchido',
             'logradouro.required' => 'O campo Logradouro deve ser preenchido',
@@ -45,6 +46,17 @@ class ClientController extends Controller
             'cidade.required' => 'O campo Cidade deve ser preenchido',
             'estado.required' => 'O campo Estado deve ser preenchido'
         ]);
+
+        if($request->hasFile('foto')) {
+            $filename = $request->file('foto')->getClientOriginalName();// Pega o nome da imagem
+            $getfilenamewitoutext = pathinfo($filename, PATHINFO_FILENAME); // Pega o nome sem a extensão
+            $getfileExtension = $request->file('foto')->getClientOriginalExtension(); // Pega a extensão da imagem
+            $createnewFileName = time().'_'.str_replace(' ','_', $getfilenamewitoutext).'.'.$getfileExtension; // Cria um random name
+            $img_path =  public_path().'/clientes_img'; 
+            $request->file('foto')->move($img_path, $createnewFileName);
+
+            $request->request->add(['foto' => $createnewFileName]);
+        }
 
         $request->request->add(['user_id' => auth()->id()]);
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -20,10 +21,10 @@ class AuthController extends Controller
             'email.required' => 'Por favor, preencha seu email.',
             'email.email' => 'Preencha um e-mail válido',
             'password.required' => 'Por favor, digite uma senha',
-            'password.min' => 'A senha deve conter no mínimo :min caracteres',
+            'password' => 'A senha deve conter no mínimo :min caracteres',
             'password.confirmed' => 'As senhas não conferem'
         ]);
-       
+
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
@@ -34,37 +35,14 @@ class AuthController extends Controller
 
     }
 
-    // public function register(Request $request)
-    // {
-    //     $fields = $request->validate([
-    //         'name' => 'required|string',
-    //         'email' => 'required|email|unique:users,email',
-    //         'password' => 'required|string|confirmed|min:6'
-    //     ], [
-    //         'name.required' => 'Por favor, preencha seu nome.',
-    //         'email.required' => 'Por favor, preencha seu email.',
-    //         'email.email' => 'Preencha um e-mail válido',
-    //         'password.required' => 'Por favor, digite uma senha',
-    //         'password.min' => 'A senha deve conter no mínimo :min caracteres',
-    //         'password.confirmed' => 'As senhas não conferem'
-    //     ]);
-       
-    //     $user = User::create([
-    //         'name' => $fields['name'],
-    //         'email' => $fields['email'],
-    //         'password' => bcrypt($fields['password'])
-    //     ]);
+    public function register_random()
+    {
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $user = \App\Models\User::factory(User::class)->create();
 
-    //     $response = [
-    //         'user' => $user,
-    //         'token' => $token
-    //     ];
+        return $user;
 
-    //     return response($response, 201);
-
-    // }
+    }
 
     public function login(Request $request)
     {

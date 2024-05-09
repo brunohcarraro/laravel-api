@@ -36,17 +36,22 @@ class ProductsController extends Controller
         ]);
 
         if($request->hasFile('foto')) {
-            $filename = "tteste"; // Pega o nome da imagem
+
+            $imageBame = Str::random(32).'.'.$request->file('foto')
+
+
+            $filename = $request->file('foto')->getClientOriginalName();// Pega o nome da imagem
             $getfilenamewitoutext = pathinfo($filename, PATHINFO_FILENAME); // Pega o nome sem a extensão
-            $getfileExtension = $req->file('foto')->getClientOriginalExtension(); // Pega a extensão da imagem
+            $getfileExtension = $request->file('foto')->getClientOriginalExtension(); // Pega a extensão da imagem
             $createnewFileName = time().'_'.str_replace(' ','_', $getfilenamewitoutext).'.'.$getfileExtension; // Cria um random name
-            $img_path =  public_path().'/produtos_img/'.$createnewFileName; 
-            $req->file('foto')->move($img_path, $createnewFileName);
+            $img_path =  public_path().'/produtos_img'; 
+            $request->file('foto')->move($img_path, $createnewFileName);
 
             $request->request->add(['foto' => $createnewFileName]);
         }
 
         $request->request->add(['client_id' => auth()->id()]);
+        $request->request->add(['foto' => $request->file('foto')->getClientOriginalName()]);
         $request->merge(['slug' => Str::slug($request->input('nome'))]);
 
         return Product::create($request->all());
