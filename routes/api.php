@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -22,7 +23,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Rotas protegidas
 Route::group(['middleware' => ['auth:sanctum']], function () {
+	Route::resource('clients', ClientController::class);
 	Route::resource('products', ProductsController::class);
+	
 	Route::get('/products/search/{nome}', [ProductsController::class, 'search']);
 	Route::post('/logout', [AuthController::class, 'logout']);
 });

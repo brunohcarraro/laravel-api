@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Client;
 use App\Models\Product;
+use Illuminate\Support\Str;
 
 class ProductsController extends Controller
 {
@@ -33,6 +35,20 @@ class ProductsController extends Controller
             'preco.required' => 'O campo preço deve ser preenchido'
         ]);
 
+        if($request->hasFile('foto')) {
+            $filename = "tteste"; // Pega o nome da imagem
+            $getfilenamewitoutext = pathinfo($filename, PATHINFO_FILENAME); // Pega o nome sem a extensão
+            $getfileExtension = $req->file('foto')->getClientOriginalExtension(); // Pega a extensão da imagem
+            $createnewFileName = time().'_'.str_replace(' ','_', $getfilenamewitoutext).'.'.$getfileExtension; // Cria um random name
+            $img_path =  public_path().'/produtos_img/'.$createnewFileName; 
+            $req->file('foto')->move($img_path, $createnewFileName);
+
+            $request->request->add(['foto' => $createnewFileName]);
+        }
+
+        $request->request->add(['client_id' => auth()->id()]);
+        $request->merge(['slug' => Str::slug($request->input('nome'))]);
+
         return Product::create($request->all());
     }
 
@@ -57,6 +73,7 @@ class ProductsController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::find($id);
+        $request->merge(['slug' => Str::slug($request->input('nome'))]);        
         $product->update($request->all());
 
         return $product;
