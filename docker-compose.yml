@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+    # PHP-FPM - Service
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        tty: true
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./docker-files/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - app-network
+
+    # NGINX - Service
+    webserver:
+        image: nginx:alpine
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "9000:80"
+            - "8443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker-files/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - app-network
+
+    # MariaDB - Service
+    db:
+        image: mariadb:10.5.6
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "9306:3306"
+        environment:
+            MYSQL_DATABASE: db
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - mariadbdata:/var/lib/mysql
+            - ./docker-files/mysql/my.cnf:/etc/mysql/my.cnf
+        networks:
+            - app-network
+
+    phpmyadmin:
+        image: phpmyadmin:latest
+        links:
+            - db
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            UPLOAD_LIMIT: 2000M
+        ports:
+            - '8080:80'
+        networks:
+            - app-network
+
+# Volumes
+volumes:
+    mariadbdata:
+        driver: local
+
+# Networks
+networks:
+    app-network:
+        driver: bridge
