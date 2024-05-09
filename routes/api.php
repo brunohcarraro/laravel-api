@@ -26,6 +26,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 	Route::resource('clients', ClientController::class);
 	Route::resource('products', ProductsController::class);
 	
+	Route::get('/products/search-client/{id}', [ProductsController::class, 'search_client']);
 	Route::get('/products/search/{nome}', [ProductsController::class, 'search']);
 	Route::post('/logout', [AuthController::class, 'logout']);
 });

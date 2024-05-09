@@ -16,7 +16,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        return Product::paginate(5);
     }
 
     /**
@@ -88,6 +88,17 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         return Product::destroy($id);
+    }
+
+    /**
+     * Buscar por cliente.
+     *
+     * @param  int  $client_id
+     * @return \Illuminate\Http\Response
+     */
+    public function search_client($id)
+    {
+        return Product::where('client_id', $id)->paginate(5);
     }
 
     /**
