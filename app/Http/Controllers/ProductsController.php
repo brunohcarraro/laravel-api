@@ -29,30 +29,31 @@ class ProductsController extends Controller
     {
         $request->validate([
             'nome' => 'required',
-            'preco' => 'required'
+            'preco' => 'required',
+            'client_id' => 'required'
         ], [
             'nome.required' => 'O campo nome deve ser preenchido',
-            'preco.required' => 'O campo preço deve ser preenchido'
+            'preco.required' => 'O campo preço deve ser preenchido',
+            'client_id.required' => 'Preencha o ID do cliente'
         ]);
 
         if($request->hasFile('foto')) {
 
-            $imageBame = Str::random(32).'.'.$request->file('foto')
-
-
             $filename = $request->file('foto')->getClientOriginalName();// Pega o nome da imagem
-            $getfilenamewitoutext = pathinfo($filename, PATHINFO_FILENAME); // Pega o nome sem a extensão
-            $getfileExtension = $request->file('foto')->getClientOriginalExtension(); // Pega a extensão da imagem
-            $createnewFileName = time().'_'.str_replace(' ','_', $getfilenamewitoutext).'.'.$getfileExtension; // Cria um random name
+            $createnewFileName = time().'_'.$filename; // Cria um random name
             $img_path =  public_path().'/produtos_img'; 
             $request->file('foto')->move($img_path, $createnewFileName);
 
             $request->request->add(['foto' => $createnewFileName]);
         }
 
-        $request->request->add(['client_id' => auth()->id()]);
-        $request->request->add(['foto' => $request->file('foto')->getClientOriginalName()]);
         $request->merge(['slug' => Str::slug($request->input('nome'))]);
+
+        if (!Client::find($request->client_id)) {
+            return response([
+                'message' => 'Você precisa cadastrar este cliente primeiramente.'
+            ], 401);
+        }
 
         return Product::create($request->all());
     }

@@ -1,64 +1,63 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Informações sobre o projeto
 
-## About Laravel
+Primeiros passos: 
+	- Clone o projeto em sua máquina.
+	- Inicialize o docker com docker compose up
+	- Acesse o terminal da aplicação (app-1)
+	- Rode os seguintes comandos:
+		-> composer update
+		-> php artisan migrate
+		-> php artisan serve
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Informações adicionais
+	- O projeto vai rodar na parta 9000 ([127.0.0.1:9000](http:127.0.0.1:9000)). Está configurada essa porta para evitar possíveis conflitos com a porta 8000, por ser padrão.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fluxo de teste
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Para seguir o fluxo de teste, você deve rodar no terminal da aplicação o comando para criar um usuário para realizar a autenticação
+	Comando para registrar usuário com as informações que você desejar (Nome, email, senha e confirmação de senha), veja um exemplo: 
+	php artisan command:register "Bruno Carraro" "bruno@bruno.com" "123456" "123456"
+	* maiores informações sobre as validações de registro, podem ser vista em AuthController::register()
 
-## Learning Laravel
+	Comando para registrar usuário de forma randômica, via factory: 
+	php artisan command:register_rand
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Ao criar um usuário, você verá no terminal as informações para efetuar a autenticação. Abra um aplicação para testar API (Postman) e realize a autenticação conforme abaixo:
+	- Request: POST http://127.0.0.1:9000/api/login
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+	- Headers: 
+		Accept 		application/json
 
-## Laravel Sponsors
+	- Body: x-www-form-urlenconded
+		email		email@email.com
+		password	password
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Ao efetuar a requisição, ele vai retornar o token da autenticação.
 
-### Premium Partners
+Para as demais requisições, é obrigatório o uso da Authorization Bearer
+	Exemplo: 
+		Headers: 
+		Authorization	Bearer 1|1p4XH93ToTkx0J6OABwjtxaa61xK3JiDMR8A23uP
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## Segue lista das APIs disponibilizadas:
+- Registro: 
+	POST http://127.0.0.1:9000/api/register
+- Login: 
+	POST http://127.0.0.1:9000/api/login
 
-## Contributing
+- Clientes: 
+	GET | POST | PUT | DELETE  http://127.0.0.1:9000/api/clients
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Produtos: 
+	GET | POST | PUT | DELETE  http://127.0.0.1:9000/api/products
 
-## Code of Conduct
+- Filtrar Produtos por cliente: 
+	POST http://127.0.0.1:9000/api/products/search-client/{id}
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- Filtrar Produtos por nome: 
+	POST http://127.0.0.1:9000/api/products/search/{nome}
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- ** Logout
+	POST http://127.0.0.1:9000/api/logout
