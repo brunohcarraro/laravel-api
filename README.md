@@ -9,6 +9,7 @@ Primeiros passos: <br/>
 	- Rode os seguintes comandos:<br/><br/>
 	composer update<br/>
 	php artisan migrate<br/>
+	php artisan storage:link<br/>
 	php artisan serve<br/>
 
 Informações adicionais
@@ -18,7 +19,7 @@ Informações adicionais
 
 Para seguir o fluxo de teste, você deve rodar no terminal da aplicação o comando para criar um usuário para realizar a autenticação
 
-Comando para registrar usuário com as informações que você desejar (Nome, email, senha e confirmação de senha), veja um exemplo: 
+Comando para registrar usuário com as informações que você desejar (Nome, email, senha e confirmação de senha), veja um exemplo: <br/>
 	* maiores informações sobre as validações de registro, podem ser vista em AuthController::register()
 
 	php artisan command:register "Bruno Carraro" "bruno@bruno.com" "123456" "123456"
