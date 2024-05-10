@@ -2,14 +2,17 @@
 
 ## Informações sobre o projeto
 
-Primeiros passos: 
-	- Clone o projeto em sua máquina.
-	- Inicialize o docker com docker compose up
-	- Acesse o terminal da aplicação (app-1)
+Primeiros passos: <br/>
+	- Clone o projeto em sua máquina.<br/>
+	- Inicialize o docker com docker compose up<br/>
+	- Acesse o terminal da aplicação (app-1)<br/>
 	- Rode os seguintes comandos:
-		-> composer update
-		-> php artisan migrate
-		-> php artisan serve
+
+		composer update
+
+		php artisan migrate
+
+		php artisan serve
 
 Informações adicionais
 	- O projeto vai rodar na parta 9000 ([127.0.0.1:9000](http:127.0.0.1:9000)). Está configurada essa porta para evitar possíveis conflitos com a porta 8000, por ser padrão.
