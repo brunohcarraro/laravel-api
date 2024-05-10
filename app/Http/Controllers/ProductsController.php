@@ -30,32 +30,29 @@ class ProductsController extends Controller
         $request->validate([
             'nome' => 'required',
             'preco' => 'required',
-            'client_id' => 'required'
+            'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ], [
             'nome.required' => 'O campo nome deve ser preenchido',
             'preco.required' => 'O campo preço deve ser preenchido',
-            'client_id.required' => 'Preencha o ID do cliente'
+            'foto.image' => 'Não é permitido enviar aquivos, somente imagens.',
+            'foto.mimes' => 'Envie um arquivo nos formatos jpeg, png, jpg ou gif.'
         ]);
 
-        if($request->hasFile('foto')) {
-
-            $filename = $request->file('foto')->getClientOriginalName();// Pega o nome da imagem
-            $createnewFileName = time().'_'.$filename; // Cria um random name
-            $img_path =  public_path().'/produtos_img'; 
-            $request->file('foto')->move($img_path, $createnewFileName);
-
-            $request->request->add(['foto' => $createnewFileName]);
-        }
-
         $request->merge(['slug' => Str::slug($request->input('nome'))]);
+        $request->request->add(['client_id' => auth()->id()]);
+        $create = Product::create($request->all());
 
-        if (!Client::find($request->client_id)) {
-            return response([
-                'message' => 'Você precisa cadastrar este cliente primeiramente.'
-            ], 401);
-        }
+        if($request->file('foto')) {
+            $imageName = time() . '.' . $request->file('foto')->getClientOriginalExtension();
+            $public_path_lg = 'public/imagens/produtos/' .$create->id;
 
-        return Product::create($request->all());
+            $filePath = $request->file('foto')->storeAs($public_path_lg, $imageName);
+
+            $create->foto = $imageName;
+            $create->save();
+        }        
+
+        return $create;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterCommand extends Command
 {
@@ -39,6 +40,31 @@ class RegisterCommand extends Command
     {
         $this->info('Registrando usuário...');
         
+        $rules = [
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|confirmed|min:6'
+        ];
+
+        $customMessages = [
+            'required' => 'O campo :attribute é obrigatório.',
+            'email' => 'O campo :attribute deve ser válido.',
+            'min' => [
+                'string' => 'A senha deve conter no mínimo :min caracteres'
+            ]
+        ];
+
+        $validator = Validator::make($this->arguments(), $rules, $customMessages);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $this->error('Atenção:');
+            foreach ($errors as $error) {
+                $this->error($error);
+            }
+            return;
+        }
+
         $parameters = [
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),
